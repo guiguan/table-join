@@ -3,7 +3,7 @@
 * @Date:   2016-11-02T17:46:17+11:00
 * @Email:  root@guiguan.net
 * @Last modified by:   guiguan
-* @Last modified time: 2016-11-03T02:44:03+11:00
+* @Last modified time: 2016-11-03T03:29:46+11:00
 */
 
 package net.guiguan.exercise.tests;
@@ -50,9 +50,9 @@ public class TableJoinerTest extends TestCase {
         int doublePrecision = 6;
 
         // calculate expected values
-        HashMap<Double, T1> t1Z = new HashMap<Double, T1>();
+        HashMap<Double, T1> t1Zs = new HashMap<Double, T1>();
         this.expectedTotalRowCount = 0;
-        HashSet<Double> t1X = new HashSet<Double>();
+        HashSet<Double> t1Xs = new HashSet<Double>();
 
         Gson gson =
             new GsonBuilder()
@@ -63,7 +63,7 @@ public class TableJoinerTest extends TestCase {
             stream.forEach(line -> {
                 T1 t1 = gson.fromJson(line, T1.class);
                 if (t1.z > 0) {
-                    t1Z.put(t1.z, t1);
+                    t1Zs.put(t1.z, t1);
                 }
             });
         } catch (IOException e) {
@@ -73,20 +73,21 @@ public class TableJoinerTest extends TestCase {
         try (Stream<String> stream = Files.lines(t2JsonPath)) {
             stream.forEach(line -> {
                 T2 t2 = gson.fromJson(line, T2.class);
-                if (t1Z.containsKey(t2.z)) {
+                if (t1Zs.containsKey(t2.z)) {
                     // this t2 row should be joined to the matched t1 row
                     this.expectedTotalRowCount++;
-                    t1X.add(t1Z.get(t2.z).x);
+                    t1Xs.add(t1Zs.get(t2.z).x);
                 }
             });
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        int expectedUniqueXCount = t1X.size();
+        int expectedUniqueXCount = t1Xs.size();
 
         // calculate actual values
         TableJoiner tj = new TableJoiner(t1JsonPath, t2JsonPath, null, doublePrecision);
+        tj.join();
 
         int actualTotalRowCount = tj.getTotalRowCount();
         int actualUniqueXCount = tj.getUniqueXCount();
