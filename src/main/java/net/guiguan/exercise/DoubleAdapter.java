@@ -3,7 +3,7 @@
 * @Date:   2016-11-02T23:33:02+11:00
 * @Email:  root@guiguan.net
 * @Last modified by:   guiguan
-* @Last modified time: 2016-11-03T05:46:42+11:00
+* @Last modified time: 2016-11-03T06:28:29+11:00
 */
 
 package net.guiguan.exercise;
@@ -22,13 +22,24 @@ public class DoubleAdapter extends TypeAdapter<Double> {
      */
     public int precision;
 
+    /**
+     * Construct with given precision
+     *
+     * @param precision (required) number of decimal places to keep
+     */
     public DoubleAdapter(int precision) { this.precision = precision; }
 
+    /**
+     * Construct with default precision (DoubleAdapter.DEFAULT_PRECISION)
+     */
     public DoubleAdapter() {
         // default precision
         this.precision = this.DEFAULT_PRECISION;
     }
 
+    /**
+     * Reads one JSON numeric value and converts it to a Double.
+     */
     public Double read(JsonReader reader) throws IOException {
         if (reader.peek() == JsonToken.NULL) {
             reader.nextNull();
@@ -39,6 +50,9 @@ public class DoubleAdapter extends TypeAdapter<Double> {
             .doubleValue();
     }
 
+    /**
+     * Writes one JSON numeric value for given Double.
+     */
     public void write(JsonWriter writer, Double value) throws IOException {
         if (value == null) {
             writer.nullValue();

@@ -1,9 +1,18 @@
+<!--
+@Author: Guan Gui <guiguan>
+@Date:   2016-11-02T02:59:58+11:00
+@Email:  root@guiguan.net
 @Last modified by:   guiguan
+@Last modified time: 2016-11-03T06:41:44+11:00
+-->
 
- # Installation & Usage
 
-1. `git clone https://github.com/guiguan/table-join.git`
-2. `cd table-join`
+
+# Installation & Usage
+
+1. Make sure JDK 8 and Maven 3 are installed
+2. `git clone https://github.com/guiguan/table-join.git`
+3. `cd table-join`
 
 ## Build and run unit test
 

@@ -3,7 +3,7 @@
 * @Date:   2016-11-02T17:46:17+11:00
 * @Email:  root@guiguan.net
 * @Last modified by:   guiguan
-* @Last modified time: 2016-11-03T05:54:15+11:00
+* @Last modified time: 2016-11-03T06:29:39+11:00
 */
 
 package net.guiguan.exercise.tests;
@@ -20,6 +20,8 @@ import com.google.gson.*;
 import net.guiguan.exercise.*;
 import java.util.HashMap;
 import java.util.HashSet;
+
+import java.math.BigDecimal;
 
 /**
  * Unit test for TableJoiner.
@@ -99,7 +101,7 @@ public class TableJoinerTest extends TestCase {
     }
 
     /**
-     * Test case that validates the double deserializer for GSON can round
+     * Test case that validates the double adapter for GSON that can round
      * doubles to desired decimal places
      */
     public void testDoubleAdapter() {
@@ -113,6 +115,8 @@ public class TableJoinerTest extends TestCase {
         assertTrue(gson.fromJson("46.1999999", double.class) == 46.2);
         assertTrue(gson.fromJson("46.1999995", double.class) == 46.2);
         assertTrue(gson.fromJson("46.1999994", double.class) == 46.199999);
+        assertTrue(gson.toJson(46.1999991).equals("46.199999"));
+        assertTrue(gson.toJson(46.19999999).equals("46.2"));
     }
 
     /**

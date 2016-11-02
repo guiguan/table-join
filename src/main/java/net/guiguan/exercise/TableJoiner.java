@@ -3,7 +3,7 @@
 * @Date:   2016-11-02T17:32:22+11:00
 * @Email:  root@guiguan.net
 * @Last modified by:   guiguan
-* @Last modified time: 2016-11-03T05:53:52+11:00
+* @Last modified time: 2016-11-03T06:37:11+11:00
 */
 
 package net.guiguan.exercise;
@@ -27,6 +27,14 @@ public class TableJoiner {
     private HashMap<Double, T1> t1Zs;
     private HashMap<Double, Result> t1Xs;
 
+    /**
+     * Construct with precision
+     *
+     * @param t1JsonPath (required) t1's JSON file path
+     * @param t2JsonPath (required) t2's JSON file path
+     * @param outputPath (required) output file path
+     * @param doublePrecision (required) number of decimal places to keep
+     */
     public TableJoiner(Path t1JsonPath, Path t2JsonPath, Path outputPath,
                        int doublePrecision) {
         DoubleAdapter dA = new DoubleAdapter(doublePrecision);
@@ -42,6 +50,13 @@ public class TableJoiner {
         this.t1Xs = new HashMap<Double, Result>();
     }
 
+    /**
+     * Construct with default precision (DoubleAdapter.DEFAULT_PRECISION)
+     *
+     * @param t1JsonPath (required) t1's JSON file path
+     * @param t2JsonPath (required) t2's JSON file path
+     * @param outputPath (required) output file path
+     */
     public TableJoiner(Path t1JsonPath, Path t2JsonPath, Path outputPath) {
         this(t1JsonPath, t2JsonPath, outputPath,
              DoubleAdapter.DEFAULT_PRECISION);
@@ -125,10 +140,23 @@ public class TableJoiner {
         generateOutput();
     }
 
+    /**
+     * Get total number of joined row
+     *
+     * @return total number of joined row
+     */
     public int getTotalRowCount() { return this.totalRowCount; }
 
+    /**
+     * Get number of unique t1.x
+     *
+     * @return number of unique t1.x
+     */
     public int getUniqueXCount() { return this.t1Xs.size(); }
 
+    /**
+     * Entrypoint
+     */
     public static void main(String[] argvs) {
         Path t1JsonPath;
         Path t2JsonPath;

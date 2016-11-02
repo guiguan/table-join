@@ -3,7 +3,7 @@
 @Date:   2016-11-02T02:59:58+11:00
 @Email:  root@guiguan.net
 @Last modified by:   guiguan
-@Last modified time: 2016-11-03T04:36:43+11:00
+@Last modified time: 2016-11-03T06:42:44+11:00
 -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
@@ -11,7 +11,7 @@
     <groupId>net.guiguan.exercise</groupId>
     <artifactId>table-join</artifactId>
     <packaging>jar</packaging>
-    <version>0.1.0</version>
+    <version>1.0.0</version>
     <name>table-join</name>
     <url>https://github.com/guiguan/table-join</url>
     <description>Java SQL style table join</description>
