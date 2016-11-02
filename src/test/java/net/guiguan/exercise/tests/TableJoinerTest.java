@@ -3,7 +3,7 @@
 * @Date:   2016-11-02T17:46:17+11:00
 * @Email:  root@guiguan.net
 * @Last modified by:   guiguan
-* @Last modified time: 2016-11-03T03:29:46+11:00
+* @Last modified time: 2016-11-03T05:54:15+11:00
 */
 
 package net.guiguan.exercise.tests;
@@ -45,8 +45,8 @@ public class TableJoinerTest extends TestCase {
      * of distinct values of x expected
      */
     public void testTableJoiner() {
-        Path t1JsonPath = Paths.get("./data/t1_small.json");
-        Path t2JsonPath = Paths.get("./data/t2_small.json");
+        Path t1JsonPath = Paths.get("./data/t1.json");
+        Path t2JsonPath = Paths.get("./data/t2.json");
         int doublePrecision = 6;
 
         // calculate expected values
@@ -54,10 +54,11 @@ public class TableJoinerTest extends TestCase {
         this.expectedTotalRowCount = 0;
         HashSet<Double> t1Xs = new HashSet<Double>();
 
-        Gson gson =
-            new GsonBuilder()
-                .registerTypeAdapter(double.class, new DoubleDeserializer(doublePrecision))
-                .create();
+        DoubleAdapter dA = new DoubleAdapter(doublePrecision);
+        Gson gson = new GsonBuilder()
+                        .registerTypeAdapter(double.class, dA)
+                        .registerTypeAdapter(Double.class, dA)
+                        .create();
 
         try (Stream<String> stream = Files.lines(t1JsonPath)) {
             stream.forEach(line -> {
@@ -86,24 +87,27 @@ public class TableJoinerTest extends TestCase {
         int expectedUniqueXCount = t1Xs.size();
 
         // calculate actual values
-        TableJoiner tj = new TableJoiner(t1JsonPath, t2JsonPath, null, doublePrecision);
+        TableJoiner tj =
+            new TableJoiner(t1JsonPath, t2JsonPath, null, doublePrecision);
         tj.join();
 
         int actualTotalRowCount = tj.getTotalRowCount();
         int actualUniqueXCount = tj.getUniqueXCount();
 
-        assertTrue(this.expectedTotalRowCount == actualTotalRowCount && expectedUniqueXCount == actualUniqueXCount);
+        assertTrue(this.expectedTotalRowCount == actualTotalRowCount &&
+                   expectedUniqueXCount == actualUniqueXCount);
     }
 
     /**
      * Test case that validates the double deserializer for GSON can round
      * doubles to desired decimal places
      */
-    public void testDoubleDeserializer() {
-        Gson gson =
-            new GsonBuilder()
-                .registerTypeAdapter(double.class, new DoubleDeserializer(6))
-                .create();
+    public void testDoubleAdapter() {
+        DoubleAdapter dA = new DoubleAdapter(6);
+        Gson gson = new GsonBuilder()
+                        .registerTypeAdapter(double.class, dA)
+                        .registerTypeAdapter(Double.class, dA)
+                        .create();
 
         assertTrue(gson.fromJson("46.199999", double.class) == 46.199999);
         assertTrue(gson.fromJson("46.1999999", double.class) == 46.2);
@@ -116,10 +120,11 @@ public class TableJoinerTest extends TestCase {
      * table object (T1 or T2)
      */
     public void testTableJsonDeserialization() {
-        Gson gson =
-            new GsonBuilder()
-                .registerTypeAdapter(double.class, new DoubleDeserializer(6))
-                .create();
+        DoubleAdapter dA = new DoubleAdapter(6);
+        Gson gson = new GsonBuilder()
+                        .registerTypeAdapter(double.class, dA)
+                        .registerTypeAdapter(Double.class, dA)
+                        .create();
 
         T1 t1 = gson.fromJson("{\"_id\":10.0,\"x\":3.0,\"y\":15.0,\"z\":10.0}",
                               T1.class);

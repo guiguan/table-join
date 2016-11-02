@@ -1,14 +1,6 @@
-<!--
-@Author: Guan Gui <guiguan>
-@Date:   2016-11-02T02:59:58+11:00
-@Email:  root@guiguan.net
 @Last modified by:   guiguan
-@Last modified time: 2016-11-03T00:58:39+11:00
--->
 
-
-
-# Installation & Usage
+ # Installation & Usage
 
 1. `git clone https://github.com/guiguan/table-join.git`
 2. `cd table-join`
@@ -25,12 +17,16 @@
 
 `java -jar target/*.jar`
 
+## Run with given t1JsonPath, t2JsonPath and outputPath
+
+`java -jar target/*.jar t1JsonPath t2JsonPath outputPath`
+
 # Assumptions
 
 1. Values of `z` are unique in `t1`, but not in `t2`
 2. `t2` has about 3 times as many rows as `t1`
 3. Each row of json input files is a small JSON object
-4. Precision of double is defined in `DoubleDeserializer.precision`, which is set to 6, so `46.1999999` is considered to equal `46.2`, but not `46.199999`. Double is used in this project instead of float because `Float.parseFloat` can only keep up to 5 decimal places for a floating number. Double gives more freedom on the value of `DoubleDeserializer.precision`
+4. Precision of double is defined in `DoubleAdapter.precision`, which is set to 6, so `46.1999999` is considered equivalent to `46.2`, but not `46.199999`. Double is used in this project instead of float because `Float.parseFloat` can only keep up to 5 decimal places for a floating number. Double gives more freedom on the value of `DoubleAdapter.precision`
 
 # Design
 

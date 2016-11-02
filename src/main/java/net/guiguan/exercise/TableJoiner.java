@@ -3,18 +3,20 @@
 * @Date:   2016-11-02T17:32:22+11:00
 * @Email:  root@guiguan.net
 * @Last modified by:   guiguan
-* @Last modified time: 2016-11-03T03:27:20+11:00
+* @Last modified time: 2016-11-03T05:53:52+11:00
 */
 
 package net.guiguan.exercise;
 
 import java.io.IOException;
+import java.io.BufferedWriter;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.Path;
 import java.util.stream.Stream;
 import com.google.gson.*;
 import java.util.HashMap;
+import java.util.Arrays;
 
 public class TableJoiner {
     private Gson gson;
@@ -27,11 +29,11 @@ public class TableJoiner {
 
     public TableJoiner(Path t1JsonPath, Path t2JsonPath, Path outputPath,
                        int doublePrecision) {
-        this.gson =
-            new GsonBuilder()
-                .registerTypeAdapter(double.class,
-                                     new DoubleDeserializer(doublePrecision))
-                .create();
+        DoubleAdapter dA = new DoubleAdapter(doublePrecision);
+        this.gson = new GsonBuilder()
+                        .registerTypeAdapter(double.class, dA)
+                        .registerTypeAdapter(Double.class, dA)
+                        .create();
         this.totalRowCount = 0;
         this.t1JsonPath = t1JsonPath;
         this.t2JsonPath = t2JsonPath;
@@ -42,7 +44,7 @@ public class TableJoiner {
 
     public TableJoiner(Path t1JsonPath, Path t2JsonPath, Path outputPath) {
         this(t1JsonPath, t2JsonPath, outputPath,
-             DoubleDeserializer.DEFAULT_PRECISION);
+             DoubleAdapter.DEFAULT_PRECISION);
     }
 
     private void processT1() {
@@ -74,7 +76,7 @@ public class TableJoiner {
                         t1XRe.sumT2Y += t2.y;
                     } else {
                         // create new result entry
-                        this.t1Xs.put(t1.x, new Result(t1.x));
+                        this.t1Xs.put(t1.x, new Result(t1.x, t1.y, t2.y));
                     }
                 }
             });
@@ -83,14 +85,29 @@ public class TableJoiner {
         }
     }
 
-    private void generateSortedResult() {}
-
-    private void outputJsonFile() {}
-
-    private void generateOutput() {
-        generateSortedResult();
-        outputJsonFile();
+    private Result[] generateSortedResult() {
+        Result[] results = this.t1Xs.values().toArray(new Result[0]);
+        Arrays.sort(results,
+                    (Result r1, Result r2)
+                        -> - (new Double(r1.sumT2Y)).compareTo(r2.sumT2Y));
+        return results;
     }
+
+    private void outputJsonFile(Result[] results) {
+        if (this.outputPath != null) {
+            try (BufferedWriter writer =
+                     Files.newBufferedWriter(this.outputPath)) {
+                for (Result r : results) {
+                    writer.write(this.gson.toJson(r));
+                    writer.newLine();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void generateOutput() { outputJsonFile(generateSortedResult()); }
 
     /**
      * Performs inner join on provided two tables. This operation is idempotent.
@@ -113,7 +130,30 @@ public class TableJoiner {
     public int getUniqueXCount() { return this.t1Xs.size(); }
 
     public static void main(String[] argvs) {
-        String a = "Che";
-        System.out.println("Hello World " + a + "!");
+        Path t1JsonPath;
+        Path t2JsonPath;
+        Path outputPath;
+
+        if (argvs.length == 0) {
+            t1JsonPath = Paths.get("./data/t1.json");
+            t2JsonPath = Paths.get("./data/t2.json");
+            outputPath = Paths.get("./output.json");
+        } else if (argvs.length == 3) {
+            t1JsonPath = Paths.get(argvs[0]);
+            t2JsonPath = Paths.get(argvs[1]);
+            outputPath = Paths.get(argvs[2]);
+        } else {
+            System.err.println(
+                "Error: please provide 3 arguments (t1JsonPath, t2JsonPath, outputPath) or none to use default paths");
+            return;
+        }
+
+        TableJoiner tj = new TableJoiner(t1JsonPath, t2JsonPath, outputPath);
+        System.out.printf("Processing %s and %s...  ", t1JsonPath, t2JsonPath);
+        tj.join();
+        System.out.println("Done");
+        System.out.printf(
+            "Total joined row count: %d\nUnique t1.x count: %d\nOutput saved to %s\n",
+            tj.getTotalRowCount(), tj.getUniqueXCount(), outputPath);
     }
 }
