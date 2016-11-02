@@ -1,0 +1,11 @@
+# @Author: Guan Gui <guiguan>
+# @Date:   2016-11-02T17:57:19+11:00
+# @Email:  root@guiguan.net
+# @Last modified by:   guiguan
+# @Last modified time: 2016-11-02T19:05:52+11:00
+
+
+
+IndentWidth: 4
+ColumnLimit: 80
+UseTab: Never
